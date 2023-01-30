@@ -1,0 +1,8 @@
+**/.DS_Store
+.mongodb_key
+/ui/target
+/ui/dist
+/api/target
+/api/uploads
+/api/tmp
+/types/target

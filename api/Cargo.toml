@@ -1,0 +1,26 @@
+[package]
+name = "image-board"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+types = { path="../types" }
+serde_json = "1.0"
+actix-web = "4"
+uuid = "1.2.2"
+bson = "2.5.0"
+awmp = "0.8.1"
+env_logger = "0.10.0"
+dotenv = "0.15.0"
+actix-files = "0.6.2"
+futures = "0.3.25"
+indextree = "4.5.0"
+indexmap = "1.9.2"
+
+[dependencies.mongodb]
+version = "2.3.1"
+default-features = false
+features = ["async-std-runtime"]
+
