@@ -1,5 +1,7 @@
 # image-board
 
+## **WIP**
+
 1. Install Docker
 2. `git clone https://github.com/pablolafontaine/image-board.git`
 3. `cd image-board`
