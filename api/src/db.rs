@@ -1,4 +1,4 @@
-use crate::upload::GenerationError;
+use types::GenerationError;
 use futures::stream::StreamExt;
 use mongodb::{
     bson::{doc, Document},

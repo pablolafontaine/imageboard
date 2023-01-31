@@ -2,19 +2,9 @@ use std::error::Error;
 use crate::db::Db;
 use actix_files::NamedFile;
 use actix_web::{get, web::{self, Json}, HttpResponse};
-use std::fmt;
-use types::PostResponse;
+use types::{PostResponse, PostLoadError};
 
-#[derive(Debug)]
-struct PostLoadError;
-impl Error for PostLoadError{}
-impl fmt::Display for PostLoadError{
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Error loading post!")
-    }
-}
 
-//{"_id":{"$oid":"63d1edd540dd6211bb9186d2"},"img_path":"./uploads/3f625449-52ae-42af-92ae-a0a3e9a64958.jpeg","title":"gdsgds","text":"gdsgds","date":1674702293,"comments":[]}
 #[get("/post/{id}")]
 pub async fn view_image(db: web::Data<Db>, id: web::Path<String>) -> Result<Json<PostResponse>, Box<dyn Error>> {
     match db.get_image(&id).await {
