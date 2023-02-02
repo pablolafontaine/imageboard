@@ -4,24 +4,49 @@ use std::{fmt, error::Error};
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct PostResponse {
+    id: String,
     title: String,
     text: String,
     date: i64,
     img_path: String,
+    comments: Vec<String>,
 }
 
 impl PostResponse {
-    pub async fn new(title: String, text: String, date: i64, img_path: String) -> Self{
+    pub async fn new(id: String, title: String, text: String, date: i64, img_path: String, comments: Vec<String>) -> Self{
         PostResponse{
+            id,
             title,
             text,
             date,
             img_path,
+            comments, 
         }
     }
 
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+pub struct CommentResponse{
+    poster: String,
+    text: String,
+    date: i64,
+    img_path: String,
+    replies: Vec<String>,
+}
+
+impl CommentResponse{
+    pub async fn new(poster: String, text: String, date: i64, img_path: String, replies: Vec<String>) -> Self{
+        CommentResponse{
+            poster,
+            text,
+            date,
+            img_path,
+            replies,
+        }
+    }
+
+}
 #[derive(Debug)]
 pub struct SplitFileExtError;
 

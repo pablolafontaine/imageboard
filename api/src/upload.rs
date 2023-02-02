@@ -12,7 +12,7 @@ pub async fn generate_image_id(
     text: &str,
 ) -> Result<String, Box<dyn Error>> {
     if let Some(extension) = file_data.sanitized_file_name().rsplit_once('.') {
-        let filepath = format!("./uploads/{}.{}", Uuid::new_v4(), extension.1);
+        let filepath = format!("../uploads/{}.{}", Uuid::new_v4(), extension.1);
             file_data
             .into_inner()
             .persist(filepath.as_str())

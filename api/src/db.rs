@@ -6,7 +6,6 @@ use mongodb::{
     Client, Collection,
 };
 use std::{str::FromStr, error::Error}; 
-use indexmap::IndexMap;
 
 #[derive(Clone)]
 pub struct Db(Collection<Document>);
@@ -37,8 +36,8 @@ impl Db {
     pub async fn get_index(
         &self,
         page: u64,
-    ) -> Result<IndexMap<String, Document>, mongodb::error::Error> {
-        let mut hm: IndexMap<String, Document> = IndexMap::new();
+    ) -> Result<Vec<Document>, mongodb::error::Error> {
+        let mut list: Vec<Document> = Vec::new();
         let mut cursor = self
             .0
             .find(
@@ -46,16 +45,14 @@ impl Db {
                 FindOptions::builder()
                     .limit(10)
                     .skip(Some((page - 1) * 10))
-                    .sort(doc! {"date": 1})
+                    .sort(doc! {"date": -1})
                     .build(),
             )
             .await?;
         while let Some(doc) = cursor.next().await {
             let post = doc?;
-            if let Ok(id) = post.get_object_id("_id") {
-                hm.insert(id.to_hex(), post);
-            }
+                list.push(post);
         }
-        Ok(hm)
+        Ok(list)
     }
 }

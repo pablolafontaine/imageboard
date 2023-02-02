@@ -3,6 +3,6 @@
 /ui/target
 /ui/dist
 /api/target
-/api/uploads
+/uploads
 /api/tmp
 /types/target
