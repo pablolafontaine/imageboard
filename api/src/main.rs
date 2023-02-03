@@ -10,7 +10,7 @@ use actix_web::{
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::fs::create_dir_all("../uploads")?;
+    std::fs::create_dir_all("./uploads")?;
     let max_file_size: usize = std::env!("MAX_FILE_SIZE")
         .parse::<usize>()
         .ok()
