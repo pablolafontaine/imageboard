@@ -37,4 +37,4 @@ services:
 
 secrets:
   mongodb_key:
-    file: ../.mongodb_key
+    file: ../api/.mongodb_key

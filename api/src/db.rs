@@ -1,28 +1,31 @@
-use types::GenerationError;
+use bson::from_document;
 use futures::stream::StreamExt;
 use mongodb::{
     bson::{doc, Document},
     options::FindOptions,
     Client, Collection,
 };
-use std::{str::FromStr, error::Error}; 
+use std::{error::Error, str::FromStr};
+use types::{GenerationError, PostResponse};
 
 #[derive(Clone)]
 pub struct Db(Collection<Document>);
 
 impl Db {
     pub async fn new(uri: &str) -> Result<Self, Box<dyn Error>> {
-        let client = Client::with_uri_str(uri).await?; 
-                Ok(Db(client.database("ImageBoard").collection("Images"))) 
+        let client = Client::with_uri_str(uri).await?;
+        Ok(Db(client.database("ImageBoard").collection("Images")))
     }
     pub async fn add_image(&self, doc: &Document) -> Result<String, Box<dyn Error>> {
-        match self.0.insert_one(doc.clone(), None).await?.inserted_id.as_object_id(){
-            Some(post_id) => {
-                Ok(post_id.to_hex())
-            }
-            None => {
-                Err(Box::new(GenerationError))
-            }
+        match self
+            .0
+            .insert_one(doc.clone(), None)
+            .await?
+            .inserted_id
+            .as_object_id()
+        {
+            Some(post_id) => Ok(post_id.to_hex()),
+            None => Err(Box::new(GenerationError)),
         }
     }
 
@@ -33,11 +36,8 @@ impl Db {
         }
     }
 
-    pub async fn get_index(
-        &self,
-        page: u64,
-    ) -> Result<Vec<Document>, mongodb::error::Error> {
-        let mut list: Vec<Document> = Vec::new();
+    pub async fn get_index(&self, page: u64) -> Result<Vec<PostResponse>, mongodb::error::Error> {
+        let mut list: Vec<PostResponse> = Vec::new();
         let mut cursor = self
             .0
             .find(
@@ -50,8 +50,7 @@ impl Db {
             )
             .await?;
         while let Some(doc) = cursor.next().await {
-            let post = doc?;
-                list.push(post);
+            list.push(from_document(doc?)?);
         }
         Ok(list)
     }

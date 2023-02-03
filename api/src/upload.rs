@@ -1,9 +1,11 @@
 use crate::db::Db;
 use actix_web::{web, HttpResponse};
-use std::{error::Error, time::{SystemTime, UNIX_EPOCH}};
+use std::{
+    error::Error,
+    time::{SystemTime, UNIX_EPOCH},
+};
+use types::{ContentLengthError, FileSizeError, SplitFileExtError};
 use uuid::Uuid;
-use types::{ContentLengthError, SplitFileExtError, FileSizeError};
-
 
 pub async fn generate_image_id(
     db: web::Data<Db>,
@@ -12,26 +14,25 @@ pub async fn generate_image_id(
     text: &str,
 ) -> Result<String, Box<dyn Error>> {
     if let Some(extension) = file_data.sanitized_file_name().rsplit_once('.') {
-        let filepath = format!("../uploads/{}.{}", Uuid::new_v4(), extension.1);
-            file_data
+        let filepath = format!("./uploads/{}.{}", Uuid::new_v4(), extension.1);
+        file_data
             .into_inner()
             .persist(filepath.as_str())
             .map(|_| filepath.as_str())?;
 
-            let doc = bson::doc! {
-                "img_path": filepath.as_str(),
-                "title": title,
-                "text": text,
-                "date": SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as i64,
-                "comments" : []
-            };
+        let doc = bson::doc! {
+            "img_path": filepath.as_str(),
+            "title": title,
+            "text": text,
+            "date": SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as i64,
+            "comments" : []
+        };
 
-            db.add_image(&doc).await
+        db.add_image(&doc).await
     } else {
         Err(Box::new(SplitFileExtError))
     }
 }
-
 
 pub async fn upload_image(
     db: web::Data<Db>,
@@ -43,8 +44,14 @@ pub async fn upload_image(
         hm.get("title"),
         hm.get("text"),
     ) {
-    let max_title_len: usize = std::env!("MAX_TITLE_LEN").parse::<usize>().ok().unwrap_or(100);
-    let max_body_len: usize = std::env!("MAX_BODY_LEN").parse::<usize>().ok().unwrap_or(2000);
+        let max_title_len: usize = std::env!("MAX_TITLE_LEN")
+            .parse::<usize>()
+            .ok()
+            .unwrap_or(100);
+        let max_body_len: usize = std::env!("MAX_BODY_LEN")
+            .parse::<usize>()
+            .ok()
+            .unwrap_or(2000);
 
         if title.is_empty()
             || text.is_empty()
@@ -53,10 +60,13 @@ pub async fn upload_image(
         {
             return Err(Box::new(ContentLengthError));
         }
-        
-            Ok(HttpResponse::Found()
-                .append_header(("Location", format!("/post/{}", generate_image_id(db, file, title, text).await?)))
-                .finish())
+
+        Ok(HttpResponse::Found()
+            .append_header((
+                "Location",
+                format!("/post/{}", generate_image_id(db, file, title, text).await?),
+            ))
+            .finish())
     } else {
         Err(Box::new(FileSizeError))
     }

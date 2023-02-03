@@ -1,19 +1,26 @@
 use serde::{Deserialize, Serialize};
 use std::{fmt, error::Error};
+use bson::{oid::ObjectId, serde_helpers::serialize_object_id_as_hex_string};
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+pub struct Oid {
+	#[serde(rename = "$oid", serialize_with = "serialize_object_id_as_hex_string")]
+	oid: ObjectId,
+}
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct PostResponse {
-    id: String,
-    title: String,
-    text: String,
-    date: i64,
-    img_path: String,
-    comments: Vec<String>,
+    #[serde(rename = "_id")]
+    pub id: Oid,
+    pub title: String,
+    pub text: String,
+    pub date: i64,
+    pub img_path: String,
+    pub comments: Vec<String>,
 }
 
 impl PostResponse {
-    pub async fn new(id: String, title: String, text: String, date: i64, img_path: String, comments: Vec<String>) -> Self{
+    pub async fn new(id: Oid, title: String, text: String, date: i64, img_path: String, comments: Vec<String>) -> Self{
         PostResponse{
             id,
             title,
