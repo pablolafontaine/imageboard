@@ -10,6 +10,7 @@ struct PostProperties {
 
 #[derive(PartialEq, Properties)]
 struct IndexPageProps {
+    #[prop_or(1)]
     pub page: u8,
 }
 
@@ -21,7 +22,9 @@ fn post_component(props: &PostProperties) -> Html {
             <div class="name">{content.title.to_owned()}</div>
             <div class="text">{content.text.to_owned()}</div>
             <div class="date">{content.date.to_owned()}</div>
-            <img src={format!("http://localhost:8080/{}", content.img_path.to_owned())}/>
+            <div style="width: 25em; height: 25em;">
+            <img style="max-height: 100%; width: auto;" src={format!("http://{}:{}/{}", std::env!("API_HOST"), std::env!("API_PORT"), content.img_path.to_owned())}/>
+            </div>
         </div>
     }
 }
@@ -47,7 +50,7 @@ fn index(props: &IndexPageProps) -> Html {
             move |_| {
                 let index = index.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    match Request::get(&format!("http://localhost:8080/{}", page_copy))
+                    match Request::get(&format!("http://{}:{}/{}", std::env!("API_HOST"), std::env!("API_PORT"), page_copy))
                         .send()
                         .await
                     {
@@ -74,6 +77,7 @@ fn index(props: &IndexPageProps) -> Html {
                 Some(e) => {
     html! {
         <>
+            <h1> {"Failed to load page!"} </h1>
             <p> {e} </p>
         </>
     }
@@ -94,7 +98,7 @@ fn index(props: &IndexPageProps) -> Html {
 fn switch(routes: MainRoute) -> Html {
     match routes {
         MainRoute::Index { page } => html! {<> <Index page={page} /> </>},
-        MainRoute::Home => html! { <Redirect<MainRoute> to={MainRoute::Index { page: 1 } }/> },
+        MainRoute::Home => html! { <> <Index/> </> }, 
     }
 }
 

@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
             HttpServer::new(move || {
                 let cors = Cors::default()
                     .allowed_origin_fn(|origin, _req_head| {
-                        origin.as_bytes().ends_with(b"localhost:8086")
+                        origin.as_bytes().ends_with(format!("{}:{}", UI_HOST, UI_PORT).as_bytes())
                     })
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
