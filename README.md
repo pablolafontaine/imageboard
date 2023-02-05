@@ -1,4 +1,4 @@
-# kouchain
+# kouchan
 100% Rust imageboard backend and frontend using Actix and Yew respectively.
 
  **WIP**
