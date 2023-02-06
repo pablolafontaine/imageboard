@@ -1400,26 +1400,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "image-board"
-version = "0.1.0"
-dependencies = [
- "actix-cors",
- "actix-files",
- "actix-web",
- "awmp",
- "bson",
- "dotenv",
- "env_logger",
- "futures",
- "indexmap",
- "indextree",
- "mongodb",
- "serde_json",
- "types",
- "uuid 1.2.2",
-]
-
-[[package]]
 name = "implicit-clone"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1515,6 +1495,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49409df3e3bf0856b916e2ceaca09ee28e6871cf7d9ce97a692cacfdb2a25a47"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "kouchan-api"
+version = "0.1.0"
+dependencies = [
+ "actix-cors",
+ "actix-files",
+ "actix-web",
+ "awmp",
+ "bson",
+ "dotenv",
+ "env_logger",
+ "futures",
+ "indexmap",
+ "indextree",
+ "mongodb",
+ "serde_json",
+ "types",
+ "uuid 1.2.2",
 ]
 
 [[package]]
