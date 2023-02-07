@@ -1,5 +1,5 @@
 use crate::db::Db;
-use actix_web::{web, HttpResponse};
+use actix_web::{web::Json, web};
 use std::{
     error::Error,
     time::{SystemTime, UNIX_EPOCH},
@@ -37,7 +37,7 @@ pub async fn generate_image_id(
 pub async fn upload_image(
     db: web::Data<Db>,
     mut parts: awmp::Parts,
-) -> Result<HttpResponse, Box<dyn Error>> {
+) -> Result<Json<String>, Box<dyn Error>> {
     let hm = parts.texts.as_hash_map();
     if let (Some(file), Some(title), Some(text)) = (
         parts.files.take("file").pop(),
@@ -61,12 +61,9 @@ pub async fn upload_image(
             return Err(Box::new(ContentLengthError));
         }
 
-        Ok(HttpResponse::Found()
-            .append_header((
-                "Location",
-                format!("/post/{}", generate_image_id(db, file, title, text).await?),
-            ))
-            .finish())
+        
+
+        Ok(Json(generate_image_id(db, file, title, text).await?))
     } else {
         Err(Box::new(FileSizeError))
     }

@@ -1,4 +1,4 @@
-use crate::components::{index, navbar};
+use crate::components::{create_post, index, navbar};
 use types::PostResponse;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -10,12 +10,15 @@ enum MainRoute {
     Index { page: u8 },
     #[at("/")]
     Home,
+    #[at("/post")]
+    Post,
 }
 
 fn switch(routes: MainRoute) -> Html {
     match routes {
         MainRoute::Index { page } => html! {<> <index::Index page={page} /> </>},
         MainRoute::Home => html! { <> <index::Index/> </> },
+        MainRoute::Post => html! { <> <create_post::CreatePost /> </> },
     }
 }
 
