@@ -2,6 +2,7 @@
 /api/.mongodb_key
 /ui/target
 /ui/dist
+/ui/styles/output.css
 /api/target
 /api/uploads
 /api/tmp
