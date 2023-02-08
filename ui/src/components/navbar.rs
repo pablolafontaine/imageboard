@@ -16,7 +16,7 @@ pub fn navbar_component() -> Html {
                 <div class="sm:flex justify-around">
       <a href="/" class="text-white text-xl font-bold p-2">{"kouchan"}</a>
 
-      <ul class="text-gray-400 sm:self-center text-l border-t sm:border-none">
+      <ul class="text-white sm:self-center text-l border-t sm:border-none">
             <li class="sm:inline-block">
                 <a href="/post" class="p-2 hover:text-white">{"new post"}</a>
             </li>

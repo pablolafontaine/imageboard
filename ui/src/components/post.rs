@@ -55,17 +55,21 @@ pub fn post_component(props: &PostProperties) -> Html {
     };
 
     html! {
-        <div class="pt-4 pb-4 mt-4 mb-4 bg-gray-700 rounded-lg">
-            <div class="ml-4 mr-4 inline-block">
-            <div class="name">{content.title.to_owned()}</div>
-            {display_date}
-            <div class="max-w-xl max-h-[36rem]">
-            <div class="pr-4 mr-4">
-            <img class="max-h-full w-1/4 float-left pr-4 rounded-sm" src={format!("http://{}:{}/{}", std::env!("API_HOST"), std::env!("API_PORT"), content.img_path.to_owned())}/>
-            <div class="ml-4">{content.text.to_owned()}</div>
-            </div>
-            </div>
-            </div>
+        <div class="relative bg-darkish-purple p-6 max-w-full break-words text-gray-500 border-l-4 border-grey-purple rounded-md mb-4 drop-shadow-xl hover:border-hot-pink hover:scale-[1.01] hover:drop-shadow-xxl transition">
+            <div class="font-sans flex flex-row z-10">
+      <div class="flex-none w-1/3 max-h-96 z-10">
+        <img src={format!("http://{}:{}/{}", std::env!("API_HOST"), std::env!("API_PORT"), content.img_path.to_owned())}
+            class="w-full h-full object-center object-scale-down rounded-lg drop-shadow-lg"/>
+      </div>
+      <div class="flex flex-col shrink w-full max-h-96 pl-4 overflow-y-auto z-10">
+          <h2 class="text-lg font-bold">{content.title.to_owned()}</h2>
+          <p class="text-white">{display_date}</p>
+          <div class="h-full w-full mt-2 rounded-md bg-purple">
+        <p class="text-white p-2 md:text-sm text-xs"> {content.text.to_owned()}</p>
         </div>
-    }
+        </div>
+    </div>
+    </div>
+
+        }
 }

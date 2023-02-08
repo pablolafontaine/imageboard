@@ -25,16 +25,28 @@ fn switch(routes: MainRoute) -> Html {
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <>
-            <div class="fixed bg-opacity-25 bg-gray-700 w-full">
+        <div class="bg-dark-purple">
+            <div class="fixed bg-opacity-25 bg-purple w-full">
            <navbar::Navbar/>
            </div>
-           <div class="text-gray-100 pt-12 pl-12 pr-12">
+           <div class="text-white pt-12 pl-12 pr-12">
             <BrowserRouter>
+          <div class="flex flex-col md:flex-row">
+          <div class="w-0 md:w-1/4 p-2 hidden md:block">
+          </div>
+          <div class="w-full p-2">
                 <Switch<MainRoute> render={switch}  />
+          </div>
+          <div class="w-0 md:w-1/4 p-2 hidden md:block center-content">
+          <div>
+          {"Boards"}
+          </div>
+          </div>
+        </div>
+
             </ BrowserRouter>
             </div>
-            </>
+            </div>
     }
 }
 
