@@ -4,18 +4,18 @@ module.exports = {
   darkMode: 'class',
   content: ["./src/**/*.{html,rs}", "./index.html"],
   theme: {
+    extend: {
 	  colors: {
-		 transparent: 'transparent',
- 		 current: 'currentColor',
-		'white': '#ffffff',
-		'dark-purple': '#2d2038',
-		'darkish-purple': '#322740',
-		'purple': '#413651',
-		'grey-purple': '#483e57',
-		'hot-pink': '#f071e6',
-		'soft-pink': '#f0718f',
+		'custom-white': '#E6E7EC',
+		'custom-gray': {
+		'500': '#343541',
+		'600': '#2E3136',
+		'700': '#2A2B2E',
+		'800': '#202123',
+		},
+		'custom-black': '#1B1B1C',
 	  },
-    extend: {},
+    },
 	fontFamily: {
       sans: [
         'sans-serif',

@@ -1,4 +1,5 @@
 use crate::components::{create_post, index, navbar};
+use stdweb::web::{document, INonElementParentNode, IElement};
 use types::PostResponse;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -24,20 +25,25 @@ fn switch(routes: MainRoute) -> Html {
 
 #[function_component(App)]
 fn app() -> Html {
+    let is_dark = Box::new(use_state(|| true));
+    let is_dark_clone = is_dark.clone();
+    let theme = if *(*is_dark) {"dark"} else {"light"};
+    if let Some(root) = document().get_element_by_id("root")
+    { root.set_attribute("class", theme).unwrap_or_default();}
     html! {
-        <div class="bg-dark-purple">
-            <div class="fixed bg-opacity-25 bg-purple w-full">
-           <navbar::Navbar/>
-           </div>
-           <div class="text-white pt-12 pl-12 pr-12">
+        <div>
+           <div class="text-custom-white pt-12 pl-12 pr-12 bg-custom-white dark:bg-custom-black">
             <BrowserRouter>
           <div class="flex flex-col md:flex-row">
           <div class="w-0 md:w-1/4 p-2 hidden md:block">
+            <div class="bg-opacity-25 bg-custom-gray-800 w-full">
+           <navbar::Navbar is_dark={is_dark_clone} />
+           </div>
           </div>
           <div class="w-full p-2">
                 <Switch<MainRoute> render={switch}  />
           </div>
-          <div class="w-0 md:w-1/4 p-2 hidden md:block center-content">
+          <div class="w-0 lg:w-1/4 p-2 hidden lg:block center-content">
           <div>
           {"Boards"}
           </div>

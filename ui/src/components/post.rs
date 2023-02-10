@@ -55,7 +55,7 @@ pub fn post_component(props: &PostProperties) -> Html {
     };
 
     html! {
-        <div class="relative bg-darkish-purple p-6 max-w-full break-words text-gray-500 border-l-4 border-grey-purple rounded-md mb-4 drop-shadow-xl hover:border-hot-pink hover:scale-[1.01] hover:drop-shadow-xxl transition">
+        <div class="relative bg-custom-gray-800 p-6 max-w-full break-words text-custom-gray-500 border border-custom-gray-500 rounded-md mb-4 drop-shadow-xl hover:border-custom-white hover:scale-[1.01] hover:drop-shadow-xxl transition">
             <div class="font-sans flex flex-row z-10">
       <div class="flex-none w-1/3 max-h-96 z-10">
         <img src={format!("http://{}:{}/{}", std::env!("API_HOST"), std::env!("API_PORT"), content.img_path.to_owned())}
@@ -63,9 +63,9 @@ pub fn post_component(props: &PostProperties) -> Html {
       </div>
       <div class="flex flex-col shrink w-full max-h-96 pl-4 overflow-y-auto z-10">
           <h2 class="text-lg font-bold">{content.title.to_owned()}</h2>
-          <p class="text-white">{display_date}</p>
-          <div class="h-full w-full mt-2 rounded-md bg-purple">
-        <p class="text-white p-2 md:text-sm text-xs"> {content.text.to_owned()}</p>
+          <p class="text-custom-white">{display_date}</p>
+          <div class="h-full w-full mt-2">
+        <p class="text-custom-white md:text-sm text-xs"> {content.text.to_owned()}</p>
         </div>
         </div>
     </div>
