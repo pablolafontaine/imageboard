@@ -12,8 +12,6 @@
 6. `make up`
 
 ## TODO
-- Stop locally storing image files
 - Oauth2
-- CSS
 - Multiple boards/categories
 - Comments and replies
