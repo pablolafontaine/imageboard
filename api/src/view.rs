@@ -13,14 +13,16 @@ pub async fn view_image(
     db: web::Data<Db>,
     id: web::Path<String>,
 ) -> Result<Json<String>, Box<dyn Error>> {
-    match db.get_image(&id).await {
-        Ok(doc) => match doc {
+    if let Some(doc) = db.get_image(&id).await.ok() {
+        match doc {
             Some(post) => Ok(Json(serde_json::to_string(&post)?)),
             None => Err(Box::new(PostLoadError)),
-        },
-        Err(_) => Err(Box::new(PostLoadError)),
+        }
     }
-}
+    else{
+         Err(Box::new(PostLoadError))
+        }
+    }
 
 #[get("/uploads/{path}")]
 async fn fetch_image(path: web::Path<String>) -> Result<NamedFile, std::io::Error> {

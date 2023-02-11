@@ -19,6 +19,10 @@ futures = "0.3.25"
 indextree = "4.5.0"
 indexmap = "1.9.2"
 actix-cors = "0.6.4"
+aws-config = "0.54.1"
+aws-sdk-s3 = "0.24.0"
+mime_guess = "2.0.4"
+tokio = "1.25.0"
 
 [dependencies.mongodb]
 version = "2.3.1"

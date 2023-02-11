@@ -18,7 +18,8 @@ async fn main() -> std::io::Result<()> {
     const API_PORT: &str = std::env!("API_PORT");
     const UI_PORT: &str = std::env!("TRUNK_SERVE_PORT");
     const UI_HOST: &str = std::env!("TRUNK_SERVE_HOST");
-    let database = db::Db::new(&std::fs::read_to_string("/run/secrets/mongodb_key")?.trim()).await;
+    const AWS_ACCESS_KEY: &str = std::env!("AWS_ACCESS_KEY");
+    let database = db::Db::new(&std::fs::read_to_string("/run/secrets/mongodb_key")?.trim(), AWS_ACCESS_KEY, &std::fs::read_to_string("/run/secrets/aws_secret_key")?.trim(), "us-east-2").await;
     match database {
         Ok(d) => {
             HttpServer::new(move || {

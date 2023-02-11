@@ -1,5 +1,6 @@
 **/.DS_Store
 /api/.mongodb_key
+/api/.aws_secret_key
 /ui/target
 /ui/dist
 /ui/styles/output.css
