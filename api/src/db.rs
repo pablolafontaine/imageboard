@@ -1,11 +1,12 @@
+use actix_web::http::Uri;
 use bson::from_document;
 use futures::stream::StreamExt;
-use aws_sdk_s3::{config, Credentials, Region, types::ByteStream, output::PutObjectOutput};
+use aws_sdk_s3::{config, Credentials, Region, types::ByteStream, output::PutObjectOutput, presigning::config::PresigningConfig};
 use mongodb::{
     bson::{doc, Document},
     options::FindOptions, Collection,
 };
-use std::{error::Error, str::FromStr};
+use std::{error::Error, str::FromStr, time::Duration};
 use types::{GenerationError, PostResponse};
 
 #[derive(Clone)]
@@ -39,6 +40,10 @@ impl Db {
     pub async fn upload_image_s3(&self, body: ByteStream, key: &str) -> Result<PutObjectOutput, Box<dyn Error>>{
         let req = self.s3_client.put_object().bucket("kouchan").key(key).body(body).content_type(mime_guess::from_path(key).first_or_octet_stream().to_string());
         Ok(req.send().await?)
+    }
+
+    pub async fn get_image_s3(&self, key: &str) -> Result<Uri, Box<dyn Error>>{
+        Ok(self.s3_client.get_object().bucket("kouchan").key(key).presigned(PresigningConfig::builder().expires_in(Duration::from_secs(900)).build()?).await?.uri().clone())
     }
 
     pub async fn get_image(&self, id: &str) -> Result<Option<Document>, mongodb::error::Error> {

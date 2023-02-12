@@ -1,9 +1,8 @@
 use crate::db::Db;
-use actix_files::NamedFile;
 use actix_web::{
     get,
     web::{self, Json},
-    HttpResponse,
+    HttpResponse, 
 };
 use std::error::Error;
 use types::{PostLoadError, PostResponse};
@@ -25,8 +24,8 @@ pub async fn view_image(
     }
 
 #[get("/uploads/{path}")]
-async fn fetch_image(path: web::Path<String>) -> Result<NamedFile, std::io::Error> {
-    NamedFile::open(format!("./uploads/{}", path.as_str()))
+async fn fetch_image(db: web::Data<Db>, path: web::Path<String>) -> Result<Json<String>, Box<dyn Error>> {
+   Ok(Json(db.get_image_s3(&path).await?.to_string()))
 }
 
 pub async fn fetch_index_page(
