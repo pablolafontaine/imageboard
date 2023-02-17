@@ -1,28 +1,26 @@
-use actix_web::http::Uri;
 use bson::from_document;
+use crate::CDN_URL;
 use futures::stream::StreamExt;
-use aws_sdk_s3::{config, Credentials, Region, types::ByteStream, output::PutObjectOutput, presigning::config::PresigningConfig};
 use mongodb::{
     bson::{doc, Document},
     options::FindOptions, Collection,
 };
-use std::{error::Error, str::FromStr, time::Duration};
+use std::{error::Error, str::FromStr};
 use types::{GenerationError, PostResponse};
+
 
 #[derive(Clone)]
 pub struct Db{
     collection: Collection<Document>,
-    s3_client: aws_sdk_s3::Client,
+    pub cdn_access_key: String,
+    pub reqwest_client: reqwest::Client,
 }
 
 impl Db {
-    pub async fn new(mongo_uri: &str, aws_access_key: &str, aws_secret_access_key: &str, region: &str) -> Result<Self, Box<dyn Error>> {
+    pub async fn new(mongo_uri: &str, cdn_access_key: String) -> Result<Self, Box<dyn Error>> {
         let mongo_client = mongodb::Client::with_uri_str(mongo_uri).await?;
-
-        let cred = Credentials::new(aws_access_key, aws_secret_access_key, None, None, "loaded-from-custom-env");
-        let aws_config = config::Builder::new().region(Region::new(region.to_string())).credentials_provider(cred).build();
-        let aws_client = aws_sdk_s3::Client::from_conf(aws_config);
-        Ok(Db { collection: mongo_client.database("ImageBoard").collection("Images"), s3_client: aws_client } )
+        let reqwest_client = reqwest::Client::new();
+        Ok(Db { collection: mongo_client.database("ImageBoard").collection("Images"), cdn_access_key, reqwest_client } )
     }
     pub async fn add_image(&self, doc: &Document) -> Result<String, Box<dyn Error>> {
         match self
@@ -37,14 +35,12 @@ impl Db {
         }
     }
 
-    pub async fn upload_image_s3(&self, body: ByteStream, key: &str) -> Result<PutObjectOutput, Box<dyn Error>>{
-        let req = self.s3_client.put_object().bucket("kouchan").key(key).body(body).content_type(mime_guess::from_path(key).first_or_octet_stream().to_string());
-        Ok(req.send().await?)
+    pub async fn cdn_upload(&self, file_name: &str, file: awmp::File) -> Result<(), Box<dyn Error>>{
+            let data = std::fs::read(file.into_inner().into_temp_path().to_path_buf())?;
+            self.reqwest_client.put(format!("{}/{}",CDN_URL, file_name)).header("AccessKey", &self.cdn_access_key).header("content-type", "application/octet_stream").body(data).send().await?;
+            Ok(())
     }
 
-    pub async fn get_image_s3(&self, key: &str) -> Result<Uri, Box<dyn Error>>{
-        Ok(self.s3_client.get_object().bucket("kouchan").key(key).presigned(PresigningConfig::builder().expires_in(Duration::from_secs(900)).build()?).await?.uri().clone())
-    }
 
     pub async fn get_image(&self, id: &str) -> Result<Option<Document>, mongodb::error::Error> {
         match bson::oid::ObjectId::from_str(id) {

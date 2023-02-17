@@ -7,10 +7,10 @@ use actix_web::{
     web::{self, Data},
     App, HttpServer,
 };
+    pub static CDN_URL: &str = std::env!("CDN_URL");
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::fs::create_dir_all("./uploads")?;
     let max_file_size: usize = std::env!("MAX_FILE_SIZE")
         .parse::<usize>()
         .ok()
@@ -18,8 +18,7 @@ async fn main() -> std::io::Result<()> {
     const API_PORT: &str = std::env!("API_PORT");
     const UI_PORT: &str = std::env!("TRUNK_SERVE_PORT");
     const UI_HOST: &str = std::env!("TRUNK_SERVE_HOST");
-    const AWS_ACCESS_KEY: &str = std::env!("AWS_ACCESS_KEY");
-    let database = db::Db::new(&std::fs::read_to_string("/run/secrets/mongodb_key")?.trim(), AWS_ACCESS_KEY, &std::fs::read_to_string("/run/secrets/aws_secret_key")?.trim(), "us-east-2").await;
+    let database = db::Db::new(&std::fs::read_to_string("/run/secrets/mongodb_key")?.trim(), std::fs::read_to_string("/run/secrets/cdn_access_key")?.trim().to_owned()).await;
     match database {
         Ok(d) => {
             HttpServer::new(move || {
@@ -43,7 +42,6 @@ async fn main() -> std::io::Result<()> {
                             .route(web::get().to(view::fetch_index_page)),
                     )
                     .service(view::view_image)
-                    .service(view::fetch_image)
                     .default_service(web::route().to(view::not_found))
             })
             .bind(format!("0.0.0.0:{}", API_PORT))?

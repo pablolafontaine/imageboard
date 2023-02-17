@@ -1,7 +1,6 @@
 use chrono::{DateTime, LocalResult, TimeZone, Utc};
-use reqwasm::http::Request;
 use types::PostResponse;
-use yew::{function_component, html, Html, Properties, use_state, use_effect_with_deps};
+use yew::{function_component, html, Html, Properties};
 
 #[derive(PartialEq, Properties)]
 pub struct PostProperties {
@@ -54,41 +53,11 @@ pub fn post_component(props: &PostProperties) -> Html {
             </div>
         }
     };
-                let image = Box::new(use_state(|| None)); 
-                let err = Box::new(use_state(|| None)); 
-                let filename = content.img_path.clone();
-                {
-                let image = image.clone();
-                let err = err.clone(); 
-                use_effect_with_deps(
-                move |_| {
-                let image = image.clone();
-                let err = err.clone();
-                wasm_bindgen_futures::spawn_local(async move {
-                    let req = Request::get(&format!("http://{}:{}/uploads/{}", std::env!("API_HOST"), std::env!("API_PORT"), filename.to_owned()));
-                    match req.send().await{ 
-                        Ok(res) => {
-                            let json: Result<String, _> = res.json().await;
-                            match json{
-                                Ok(url) => image.set(Some(url)),
-                                Err(e) => err.set(Some(e.to_string())),
-                            }
-                        },
-                        Err(e) => err.set(Some(e.to_string())),
-                    };
-                });
-                || ()
-                }, 
-                ()
-                )
-                };
-    match &*(*image){
-    Some(path) => {
         html! {
         <div class="relative bg-custom-gray-800 p-6 max-w-full break-words text-custom-gray-500 border border-custom-gray-500 rounded-md mb-4 drop-shadow-xl hover:border-custom-white hover:scale-[1.01] hover:drop-shadow-xxl transition">
             <div class="font-sans flex flex-row z-10">
       <div class="flex-none w-1/3 max-h-96 z-10">
-        <img src={path.clone()}
+        <img src={format!("{}/{}",std::env!("CDN_URL"), content.img_path)}
             class="w-full h-full object-center object-scale-down rounded-lg drop-shadow-lg"/>
       </div>
       <div class="flex flex-col shrink w-full max-h-96 pl-4 overflow-y-auto z-10">
@@ -103,18 +72,4 @@ pub fn post_component(props: &PostProperties) -> Html {
 
         }
 
-    }
-    None => {
-        if let Some(e) = &*(*err){
-        html!{
-            <p> {e} </p>
-        }
-        }
-        else{
-            html!{
-            <p> {"Loading!"} </p>
-            }
-        }
-    }
-}
 }

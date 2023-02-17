@@ -10,6 +10,7 @@ services:
       dockerfile: ../docker/Dockerfile.yew
     command: /bin/bash -c "cd app/ui && trunk serve --port ${TRUNK_SERVE_PORT:-8086} --address 0.0.0.0"
     environment:
+      - CDN_URL=https://kouchan.b-cdn.net
       - API_PORT=${API_PORT:-8080}
       - API_HOST=${API_HOST:-localhost}
       - TRUNK_SERVE_PORT=${TRUNK_SERVE_PORT:-8086}
@@ -24,7 +25,7 @@ services:
       dockerfile: ../docker/Dockerfile.actix
     secrets:
       - mongodb_key
-      - aws_secret_key
+      - cdn_access_key
     command: /bin/bash -c "cd app/api && cargo watch -x run"
     environment:
       - TMPDIR=/app/api/tmp
@@ -35,11 +36,12 @@ services:
       - MAX_BODY_LEN=${MAX_BODY_LEN:-2000}
       - MAX_TITLE_LEN=${MAX_TITLE_LEN:-100}
       - MAX_FILE_SIZE=${MAX_FILE_SIZE:-3078000}
+      - CDN_URL=https://storage.bunnycdn.com/kouchan
     ports:
       - "${API_PORT:-8080}:${API_PORT:-8080}"
 
 secrets:
   mongodb_key:
     file: ../api/.mongodb_key
-  aws_secret_key:
-    file: ../api/.aws_secret_key
+  cdn_access_key:
+    file: ../api/.cdn_access_key

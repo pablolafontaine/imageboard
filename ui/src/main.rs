@@ -31,7 +31,6 @@ fn app() -> Html {
     if let Some(root) = document().get_element_by_id("root")
     { root.set_attribute("class", theme).unwrap_or_default();}
     html! {
-        <div>
            <div class="text-custom-white pt-12 pl-12 pr-12 bg-custom-white dark:bg-custom-black">
             <BrowserRouter>
           <div class="flex flex-col md:flex-row">
@@ -51,7 +50,6 @@ fn app() -> Html {
         </div>
 
             </ BrowserRouter>
-            </div>
             </div>
     }
 }

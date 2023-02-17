@@ -1,5 +1,4 @@
 use crate::db::Db;
-use aws_sdk_s3::types::ByteStream;
 use actix_web::{web::Json, web};
 use std::{
     error::Error,
@@ -16,10 +15,8 @@ pub async fn generate_image_id(
 ) -> Result<String, Box<dyn Error>> {
     if let Some(extension) = file_data.sanitized_file_name().rsplit_once('.') {
         let filename = format!("{}.{}", Uuid::new_v4(), extension.1);
-        let path = format!("{}/{}",std::env::temp_dir().to_str().unwrap(),filename);
-        file_data.into_inner().persist(&path)?;
-        let body = ByteStream::from_path(&path).await?;
-        db.upload_image_s3(body, &filename).await?;
+        db.cdn_upload(&filename, file_data).await?;
+        
         let doc = bson::doc! {
             "img_path": filename.as_str(),
             "title": title,
